@@ -26,7 +26,7 @@
           v-model="filter.search"
         />
       </v-flex>
-    </v-toolbar>
+    </v-toolbar><!--顶部，新增按钮，状态，搜索框-->
     <v-divider/>
     <v-data-table
       :headers="headers"
@@ -42,14 +42,14 @@
         <td class="text-xs-center">{{props.item.cname}}</td>
         <td class="text-xs-center">{{ props.item.bname }}</td>
         <td class="justify-center layout px-0">
-          <v-btn icon @click="editGoods(props.item)">
+          <v-btn icon @click="editGoods(props.item)"><!--props.item是一个spu的方法对象-->
             <i class="el-icon-edit"/>
           </v-btn>
-          <v-btn icon>
+          <v-btn icon @click="deleteGoods(props.item)">
             <i class="el-icon-delete"/>
           </v-btn>
-          <v-btn icon v-if="props.item.saleable">下架</v-btn>
-          <v-btn icon v-else>上架</v-btn>
+          <v-btn icon v-if="props.item.saleable">上架</v-btn>
+          <v-btn icon v-else>下架</v-btn>
         </td>
       </template>
     </v-data-table>
@@ -154,10 +154,13 @@
         // 把oldBrand变为null
         this.oldGoods = {};
       },
+      /*这async和await要有必须一起出现，一起消失，把异步的请求变成同步（从发两个请求变成只发一个请求）*/
+      /*如果没有，则可以一下做完流程。如果有，且前面出现了问题，则停止流程*/
       async editGoods(oldGoods) {
         // 发起请求，查询商品详情和skus
         oldGoods.spuDetail = await this.$http.loadData("/item/spu/detail/" + oldGoods.id);
         oldGoods.skus = await this.$http.loadData("/item/sku/list?id=" + oldGoods.id);
+        /*loadData是一个同步请求url的方法*/
         // 修改标记
         this.isEdit = true;
         // 控制弹窗可见：
@@ -183,6 +186,14 @@
         if(this.step < 4 && this.$refs.goodsForm.$refs.basic.validate()){
           this.step++
         }
+      },
+      deleteGoods(oldGoods) {
+        // 发起请求，查询商品详情和skus
+       this.$http.get("/item/sku/delete?spuId=" + oldGoods.id).then(res=>{
+         console.log(res)
+       })
+        // 重新加载数据
+        this.getDataFromServer();
       }
     },
     components: {

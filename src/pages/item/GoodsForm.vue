@@ -221,8 +221,9 @@ export default {
         url: "/item/goods",
         data: goodsParams
       })
-        .then(() => {
+        .then((res) => {
           // 成功，关闭窗口
+          console.log(res)
           this.$emit("close");
           // 提示成功
           this.$message.success("保存成功了");
