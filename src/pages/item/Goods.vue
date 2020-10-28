@@ -191,10 +191,13 @@
         // 发起请求，查询商品详情和skus
        this.$http.get("/item/sku/delete?spuId=" + oldGoods.id).then(res=>{
          console.log(res)
-       })
+       }).then(()=>
+         this.$message.info("添加成功!")
+      ).catch(()=>this.$message.error("添加失败!"))
         // 重新加载数据
         this.getDataFromServer();
-      }
+      },
+
     },
     components: {
       GoodsForm

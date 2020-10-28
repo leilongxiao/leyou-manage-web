@@ -23,17 +23,47 @@
     },
     methods: {
       handleAdd(node) {
-        console.log("add .... ");
-        console.log(node);
+        this.$http({
+          url: "item/category",
+          method: "post",
+          data: this.$qs.stringify(node)
+        }).then(resp=>{
+          this.reloadData(node.parentId)
+          this.$message.info("添加成功!")
+        }).catch(()=>{
+          this.$message.error("添加失败!")
+        })
       },
-      handleEdit(id, name) {
-        console.log("edit... id: " + id + ", name: " + name)
+      handleEdit(id,name) {
+        this.$http({
+          url: "item/category",
+          method: "put",
+          data: "id="+id+"&name="+name
+        }).catch(()=>{
+          this.$message.error("修改失败!")
+        })
       },
       handleDelete(id) {
-        console.log("delete ... " + id)
+        this.$http.delete("item/category",{
+          params:{
+            id:id
+          }
+        }).catch(()=>{
+          this.$message.error("删除失败!")
+        })
       },
       handleClick(node) {
         console.log(node)
+      },
+      reloadData(id){
+        //操作完成后刷新数据
+        console.log(id)
+        // alert(id)
+        this.$http.get("/item/category/list?pid="+id).then(resp=>{
+          this.db = resp.data;
+          this.db.forEach(n => n['path'] = [n.name])
+          console.log(this.db)
+        }).catch();
       }
     }
   };
