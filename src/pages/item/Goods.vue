@@ -48,8 +48,8 @@
           <v-btn icon @click="deleteGoods(props.item)">
             <i class="el-icon-delete"/>
           </v-btn>
-          <v-btn icon v-if="props.item.saleable">上架</v-btn>
-          <v-btn icon v-else>下架</v-btn>
+          <v-btn icon v-if="props.item.saleable" @click="revertSaleable(props.item)">下架</v-btn>
+          <v-btn icon v-else @click="revertSaleable(props.item)">上架</v-btn>
         </td>
       </template>
     </v-data-table>
@@ -192,12 +192,24 @@
        this.$http.get("/item/sku/delete?spuId=" + oldGoods.id).then(res=>{
          console.log(res)
        }).then(()=>
-         this.$message.info("添加成功!")
-      ).catch(()=>this.$message.error("添加失败!"))
+         this.$message.info("删除成功!")
+      ).catch(()=>this.$message.error("删除失败!"))
         // 重新加载数据
         this.getDataFromServer();
       },
-
+      revertSaleable(oldGoods) {
+        // 发起请求
+        this.$http.put("/item/spu/revert?spuId=" + oldGoods.id).then(res=>{
+          console.log(res)
+        }).then(()=>
+        {if(oldGoods.saleable===true)
+          this.$message.info("下架成功!");
+          else
+            this.$message.info("上架成功!");}
+        ).catch(()=>this.$message.error("上架/下架失败!"))
+        // 重新加载数据
+        this.getDataFromServer();
+      }
     },
     components: {
       GoodsForm

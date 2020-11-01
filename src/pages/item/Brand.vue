@@ -126,7 +126,7 @@
       },
       editBrand(oldBrand){
         // 根据品牌信息查询商品分类
-        this.$http.get("/item/category/bid/" + oldBrand.id)
+        this.$http.get("/item/brand/bid/" + oldBrand.id)
           .then(({data}) => {
             // 修改标记
             this.isEdit = true;
@@ -136,6 +136,7 @@
             this.oldBrand = oldBrand
             // 回显商品分类
             this.oldBrand.categories = data;
+            console.log(data);
           })
       },
       closeWindow(){
@@ -143,6 +144,16 @@
         this.getDataFromServer();
         // 关闭窗口
         this.show = false;
+      },
+      deleteBrand(oldBrand) {
+        // 发起请求，查询品牌详情和skus
+        this.$http.get("/item/brand/delete?bid=" + oldBrand.id).then(res=>{
+          console.log(res)
+        }).then(()=>
+          this.$message.info("删除成功!")
+        ).catch(()=>this.$message.error("删除失败!"))
+        // 重新加载数据
+        this.getDataFromServer();
       }
     },
     components:{
